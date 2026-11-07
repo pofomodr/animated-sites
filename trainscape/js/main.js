@@ -64,6 +64,7 @@ const Trainscape = {
         this.initTouchFeedback();
         this.initGamepad();
         this.initKeyboard();
+        this.initPassingTrain();
         
         // Start animation loop
         this.startAnimationLoop();
@@ -131,7 +132,13 @@ const Trainscape = {
             
             // Cursor
             customCursor: document.getElementById('customCursor'),
-            cursorTrail: document.getElementById('cursorTrail')
+            cursorTrail: document.getElementById('cursorTrail'),
+            
+            // Passing Train
+            passingTrainContainer: document.getElementById('passingTrainContainer'),
+            passingTrain: document.getElementById('passingTrain'),
+            tunnelOverlay: document.getElementById('tunnelOverlay'),
+            whooshSound: document.getElementById('whooshSound')
         };
     },
     
@@ -1164,6 +1171,143 @@ Trainscape.updateTrainAnimation = function(deltaTime) {
     // Animate smoke
     if (this.elements.trainSmoke && this.currentSpeed > 0) {
         this.elements.trainSmoke.style.animationDuration = `${0.5 + (1 - speedFactor) * 1.5}s`;
+    }
+};
+
+// ============================================
+// PASSING TRAIN ANIMATION (Whoosh Effect)
+// ============================================
+
+Trainscape.initPassingTrain = function() {
+    // Set up passing train animation
+    this.passingTrainInterval = null;
+    this.passingTrainTimeout = null;
+    
+    // Start periodic passing trains
+    this.startPassingTrains();
+    
+    // Also trigger on scroll
+    window.addEventListener('scroll', this.triggerPassingTrain.bind(this));
+    
+    // Trigger on device motion
+    if (window.DeviceMotionEvent) {
+        window.addEventListener('devicemotion', this.triggerPassingTrain.bind(this));
+    }
+};
+
+Trainscape.startPassingTrains = function() {
+    // Clear any existing interval
+    if (this.passingTrainInterval) {
+        clearInterval(this.passingTrainInterval);
+    }
+    
+    // Trigger a passing train every 15-25 seconds
+    this.passingTrainInterval = setInterval(() => {
+        this.triggerPassingTrain();
+    }, 20000 + Math.random() * 10000);
+};
+
+Trainscape.triggerPassingTrain = function() {
+    // Don't trigger if already animating
+    if (this.elements.passingTrain && this.elements.passingTrain.classList.contains('animate')) {
+        return;
+    }
+    
+    // Don't trigger if user is not looking at the page
+    if (document.hidden) {
+        return;
+    }
+    
+    // Random chance to trigger (50%)
+    if (Math.random() > 0.5) {
+        return;
+    }
+    
+    this.animatePassingTrain();
+};
+
+Trainscape.animatePassingTrain = function() {
+    if (!this.elements.passingTrain || !this.elements.tunnelOverlay) return;
+    
+    // Reset state
+    this.elements.passingTrain.classList.remove('animate', 'size-small', 'size-large');
+    this.elements.tunnelOverlay.classList.remove('animate');
+    this.elements.passingTrain.style.left = '-100%';
+    this.elements.passingTrain.style.opacity = '0';
+    this.elements.tunnelOverlay.style.opacity = '0';
+    
+    // Random size
+    const sizes = ['', 'size-small', 'size-large'];
+    const randomSize = sizes[Math.floor(Math.random() * sizes.length)];
+    if (randomSize) {
+        this.elements.passingTrain.classList.add(randomSize);
+    }
+    
+    // Random vertical position
+    const topPositions = ['40%', '45%', '50%', '55%', '60%'];
+    const randomTop = topPositions[Math.floor(Math.random() * topPositions.length)];
+    this.elements.passingTrain.style.top = randomTop;
+    
+    // Start animation
+    this.elements.passingTrain.classList.add('animate');
+    this.elements.tunnelOverlay.classList.add('animate');
+    
+    // Play whoosh sound
+    this.playWhooshSound();
+    
+    // Vibrate on mobile
+    this.vibrate(50);
+    
+    // Trigger again after animation completes
+    if (this.passingTrainTimeout) {
+        clearTimeout(this.passingTrainTimeout);
+    }
+    this.passingTrainTimeout = setTimeout(() => {
+        this.triggerPassingTrain();
+    }, 5000 + Math.random() * 10000);
+};
+
+Trainscape.playWhooshSound = function() {
+    if (!this.isSoundEnabled || !this.elements.whooshSound) return;
+    
+    // Create whoosh sound using Web Audio API
+    if (this.audioContext) {
+        const now = this.audioContext.currentTime;
+        
+        // Create noise buffer
+        const bufferSize = this.audioContext.sampleRate * 0.5;
+        const buffer = this.audioContext.createBuffer(1, bufferSize, this.audioContext.sampleRate);
+        const data = buffer.getChannelData(0);
+        
+        for (let i = 0; i < bufferSize; i++) {
+            data[i] = Math.random() * 2 - 1;
+        }
+        
+        const noise = this.audioContext.createBufferSource();
+        const gain = this.audioContext.createGain();
+        const filter = this.audioContext.createBiquadFilter();
+        
+        noise.buffer = buffer;
+        
+        filter.type = 'lowpass';
+        filter.frequency.setValueAtTime(1000, now);
+        filter.frequency.exponentialRampToValueAtTime(200, now + 0.5);
+        
+        gain.gain.setValueAtTime(0.1, now);
+        gain.gain.exponentialRampToValueAtTime(0.0001, now + 0.5);
+        
+        noise.connect(filter);
+        filter.connect(gain);
+        gain.connect(this.audioContext.destination);
+        
+        noise.start(now);
+        noise.stop(now + 0.5);
+    }
+    
+    // Also try HTML5 audio if available
+    if (this.elements.whooshSound) {
+        this.elements.whooshSound.currentTime = 0;
+        this.elements.whooshSound.play().catch(() => {});
     }
 };
 

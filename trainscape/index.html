@@ -25,6 +25,9 @@
     <audio id="clickSound">
         <source src="assets/sounds/click.mp3" type="audio/wav">
     </audio>
+    <audio id="whooshSound" preload="auto">
+        <source src="assets/sounds/whoosh.mp3" type="audio/mpeg">
+    </audio>
 
     <!-- Parallax Layers Container -->
     <div id="parallaxContainer" class="parallax-container">
@@ -48,6 +51,16 @@
         
         <!-- Floating Particles -->
         <div id="particles" class="particles"></div>
+        
+        <!-- Passing Train Effect (Whoosh!) -->
+        <div class="passing-train-container" id="passingTrainContainer">
+            <div class="passing-train" id="passingTrain">
+                <div class="passing-train-body"></div>
+                <div class="passing-train-windows"></div>
+                <div class="passing-train-headlight"></div>
+            </div>
+            <div class="tunnel-overlay" id="tunnelOverlay"></div>
+        </div>
     </div>
 
     <!-- Navigation -->
