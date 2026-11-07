@@ -52,14 +52,18 @@
         <!-- Floating Particles -->
         <div id="particles" class="particles"></div>
         
-        <!-- Passing Train Effect (Whoosh!) -->
+        <!-- Passing Train Video Effect -->
+        <video id="passingTrainVideo" class="passing-train-video" loop muted playsinline preload="auto">
+            <!-- Add your train video here -->
+            <!-- <source src="assets/videos/train-passing.mp4" type="video/mp4"> -->
+            <!-- For now, we'll use a CSS-based train that looks like a video -->
+        </video>
+        
+        <!-- CSS-based Fallback Train (if no video) -->
         <div class="passing-train-container" id="passingTrainContainer">
             <div class="passing-train" id="passingTrain">
-                <div class="passing-train-body"></div>
-                <div class="passing-train-windows"></div>
-                <div class="passing-train-headlight"></div>
+                <div class="train-silhouette"></div>
             </div>
-            <div class="tunnel-overlay" id="tunnelOverlay"></div>
         </div>
     </div>
 

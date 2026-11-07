@@ -1201,7 +1201,7 @@ Trainscape.startPassingTrains = function() {
         clearInterval(this.passingTrainInterval);
     }
     
-    // Trigger a passing train every 15-25 seconds
+    // Trigger a passing train every 20-30 seconds
     this.passingTrainInterval = setInterval(() => {
         this.triggerPassingTrain();
     }, 20000 + Math.random() * 10000);
@@ -1218,39 +1218,25 @@ Trainscape.triggerPassingTrain = function() {
         return;
     }
     
-    // Random chance to trigger (50%)
-    if (Math.random() > 0.5) {
-        return;
-    }
-    
+    // Always trigger - we want the train to appear regularly
     this.animatePassingTrain();
 };
 
 Trainscape.animatePassingTrain = function() {
-    if (!this.elements.passingTrain || !this.elements.tunnelOverlay) return;
+    if (!this.elements.passingTrain) return;
     
     // Reset state
-    this.elements.passingTrain.classList.remove('animate', 'size-small', 'size-large');
-    this.elements.tunnelOverlay.classList.remove('animate');
-    this.elements.passingTrain.style.left = '-100%';
+    this.elements.passingTrain.classList.remove('animate');
+    this.elements.passingTrain.style.left = '-150%';
     this.elements.passingTrain.style.opacity = '0';
-    this.elements.tunnelOverlay.style.opacity = '0';
     
-    // Random size
-    const sizes = ['', 'size-small', 'size-large'];
-    const randomSize = sizes[Math.floor(Math.random() * sizes.length)];
-    if (randomSize) {
-        this.elements.passingTrain.classList.add(randomSize);
-    }
-    
-    // Random vertical position
-    const topPositions = ['40%', '45%', '50%', '55%', '60%'];
+    // Random vertical position (centered is best for large train)
+    const topPositions = ['45%', '50%', '55%'];
     const randomTop = topPositions[Math.floor(Math.random() * topPositions.length)];
     this.elements.passingTrain.style.top = randomTop;
     
     // Start animation
     this.elements.passingTrain.classList.add('animate');
-    this.elements.tunnelOverlay.classList.add('animate');
     
     // Play whoosh sound
     this.playWhooshSound();
@@ -1258,13 +1244,13 @@ Trainscape.animatePassingTrain = function() {
     // Vibrate on mobile
     this.vibrate(50);
     
-    // Trigger again after animation completes
+    // Trigger again after animation completes (4 seconds)
     if (this.passingTrainTimeout) {
         clearTimeout(this.passingTrainTimeout);
     }
     this.passingTrainTimeout = setTimeout(() => {
         this.triggerPassingTrain();
-    }, 5000 + Math.random() * 10000);
+    }, 4000);
 };
 
 Trainscape.playWhooshSound = function() {
