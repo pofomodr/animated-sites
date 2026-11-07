@@ -134,10 +134,9 @@ const Trainscape = {
             customCursor: document.getElementById('customCursor'),
             cursorTrail: document.getElementById('cursorTrail'),
             
-            // Passing Train
-            passingTrainContainer: document.getElementById('passingTrainContainer'),
-            passingTrain: document.getElementById('passingTrain'),
-            tunnelOverlay: document.getElementById('tunnelOverlay'),
+            // Perspective Train
+            perspectiveTrainContainer: document.getElementById('perspectiveTrainContainer'),
+            perspectiveTrain: document.getElementById('perspectiveTrain'),
             whooshSound: document.getElementById('whooshSound')
         };
     },
@@ -1179,9 +1178,13 @@ Trainscape.updateTrainAnimation = function(deltaTime) {
 // ============================================
 
 Trainscape.initPassingTrain = function() {
-    // Set up passing train animation
+    // Set up perspective train animation
     this.passingTrainInterval = null;
     this.passingTrainTimeout = null;
+    this.wagonCount = 8; // Number of wagons
+    
+    // Create wagons dynamically
+    this.createWagons();
     
     // Start periodic passing trains
     this.startPassingTrains();
@@ -1193,6 +1196,36 @@ Trainscape.initPassingTrain = function() {
     if (window.DeviceMotionEvent) {
         window.addEventListener('devicemotion', this.triggerPassingTrain.bind(this));
     }
+};
+
+Trainscape.createWagons = function() {
+    if (!this.elements.perspectiveTrain) return;
+    
+    // Clear existing wagons (except engine and headlight)
+    const existingWagons = this.elements.perspectiveTrain.querySelectorAll('.train-wagon');
+    existingWagons.forEach(w => w.remove());
+    
+    // Create new wagons
+    for (let i = 0; i < this.wagonCount; i++) {
+        const wagon = document.createElement('div');
+        wagon.className = 'train-wagon';
+        wagon.style.opacity = '0';
+        wagon.style.transition = 'opacity 0.1s ease';
+        wagon.dataset.index = i;
+        this.elements.perspectiveTrain.appendChild(wagon);
+    }
+};
+
+Trainscape.startPassingTrains = function() {
+    // Clear any existing interval
+    if (this.passingTrainInterval) {
+        clearInterval(this.passingTrainInterval);
+    }
+    
+    // Trigger a passing train every 20-30 seconds
+    this.passingTrainInterval = setInterval(() => {
+        this.triggerPassingTrain();
+    }, 20000 + Math.random() * 10000);
 };
 
 Trainscape.startPassingTrains = function() {
@@ -1209,7 +1242,7 @@ Trainscape.startPassingTrains = function() {
 
 Trainscape.triggerPassingTrain = function() {
     // Don't trigger if already animating
-    if (this.elements.passingTrain && this.elements.passingTrain.classList.contains('animate')) {
+    if (this.elements.perspectiveTrain && this.elements.perspectiveTrain.classList.contains('animate')) {
         return;
     }
     
@@ -1219,24 +1252,25 @@ Trainscape.triggerPassingTrain = function() {
     }
     
     // Always trigger - we want the train to appear regularly
-    this.animatePassingTrain();
+    this.animatePerspectiveTrain();
 };
 
-Trainscape.animatePassingTrain = function() {
-    if (!this.elements.passingTrain) return;
+Trainscape.animatePerspectiveTrain = function() {
+    if (!this.elements.perspectiveTrain) return;
     
     // Reset state
-    this.elements.passingTrain.classList.remove('animate');
-    this.elements.passingTrain.style.left = '-150%';
-    this.elements.passingTrain.style.opacity = '0';
+    this.elements.perspectiveTrain.classList.remove('animate');
+    this.elements.perspectiveTrain.style.transform = 'translate(-50%, -50%) scale(0.1)';
+    this.elements.perspectiveTrain.style.opacity = '0';
     
-    // Random vertical position (centered is best for large train)
-    const topPositions = ['45%', '50%', '55%'];
-    const randomTop = topPositions[Math.floor(Math.random() * topPositions.length)];
-    this.elements.passingTrain.style.top = randomTop;
+    // Reset all wagons
+    const wagons = this.elements.perspectiveTrain.querySelectorAll('.train-wagon');
+    wagons.forEach(wagon => {
+        wagon.style.opacity = '0';
+    });
     
     // Start animation
-    this.elements.passingTrain.classList.add('animate');
+    this.elements.perspectiveTrain.classList.add('animate');
     
     // Play whoosh sound
     this.playWhooshSound();
@@ -1244,13 +1278,29 @@ Trainscape.animatePassingTrain = function() {
     // Vibrate on mobile
     this.vibrate(50);
     
-    // Trigger again after animation completes (4 seconds)
+    // Animate wagons sequentially as the train passes
+    const animationDuration = 8000;
+    const wagonDelay = animationDuration * 0.5 / this.wagonCount;
+    
+    wagons.forEach((wagon, index) => {
+        setTimeout(() => {
+            wagon.style.opacity = '1';
+            setTimeout(() => {
+                wagon.style.opacity = '0.7';
+                setTimeout(() => {
+                    wagon.style.opacity = '1';
+                }, 100);
+            }, 50);
+        }, wagonDelay * index);
+    });
+    
+    // Trigger again after animation completes
     if (this.passingTrainTimeout) {
         clearTimeout(this.passingTrainTimeout);
     }
     this.passingTrainTimeout = setTimeout(() => {
         this.triggerPassingTrain();
-    }, 4000);
+    }, animationDuration);
 };
 
 Trainscape.playWhooshSound = function() {

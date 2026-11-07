@@ -206,29 +206,12 @@ body {
 }
 
 /* ============================================
-   PASSING TRAIN VIDEO ANIMATION
+   PERSPECTIVE TRAIN ANIMATION
+   Effect: Dot on horizon → Approaches → Wagons flash by
    ============================================ */
 
-/* Video element for actual train video */
-.passing-train-video {
-    position: fixed;
-    top: 0;
-    left: 0;
-    width: 100%;
-    height: 100%;
-    object-fit: cover;
-    z-index: 5;
-    pointer-events: none;
-    opacity: 0;
-    transition: opacity 0.5s ease;
-}
-
-.passing-train-video.playing {
-    opacity: 1;
-}
-
-/* CSS-based Fallback Train (video-like appearance) */
-.passing-train-container {
+/* Container for perspective train */
+.perspective-train-container {
     position: fixed;
     top: 0;
     left: 0;
@@ -237,112 +220,159 @@ body {
     pointer-events: none;
     z-index: 5;
     overflow: hidden;
+    perspective: 1000px;
 }
 
-/* The passing train - large and prominent */
-.passing-train {
+/* The train with perspective */
+.perspective-train {
     position: absolute;
     top: 50%;
-    left: -150%;
-    width: 80%;
-    max-width: 1200px;
-    height: 300px;
-    transform: translateY(-50%);
+    left: 50%;
+    transform: translate(-50%, -50%) scale(0.1);
     opacity: 0;
     transition: none;
+    display: flex;
+    align-items: center;
+    gap: 0;
 }
 
-/* Train silhouette - looks like a video of a train */
-.train-silhouette {
+/* Train engine */
+.train-engine-perspective {
+    width: 80px;
+    height: 40px;
+    background: linear-gradient(135deg, var(--primary) 0%, var(--primary-light) 100%);
+    border-radius: 10px 10px 0 0;
+    position: relative;
+    box-shadow: 0 0 20px var(--primary-glow);
+}
+
+.train-engine-perspective::before {
+    content: '';
     position: absolute;
-    top: 0;
-    left: 0;
-    width: 100%;
-    height: 100%;
-    background: linear-gradient(90deg, 
-        transparent 0%, 
-        rgba(200, 200, 200, 0.1) 5%, 
-        rgba(200, 200, 200, 0.15) 15%, 
-        rgba(200, 200, 200, 0.2) 25%, 
-        rgba(200, 200, 200, 0.15) 35%, 
-        rgba(200, 200, 200, 0.1) 45%, 
-        rgba(200, 200, 200, 0.05) 55%, 
-        transparent 65% 
-    );
-    border-radius: 100px;
-    box-shadow: 
-        0 0 40px rgba(200, 200, 200, 0.3),
-        inset 0 0 40px rgba(200, 200, 200, 0.1);
-    filter: blur(1px);
+    top: 5px;
+    left: 10px;
+    width: 15px;
+    height: 15px;
+    background: var(--primary-light);
+    border-radius: 50%;
+    box-shadow: 0 0 10px var(--primary-glow);
 }
 
-.train-silhouette::before {
+.train-engine-perspective::after {
+    content: '';
+    position: absolute;
+    top: 5px;
+    left: 35px;
+    width: 15px;
+    height: 15px;
+    background: var(--primary-light);
+    border-radius: 50%;
+    box-shadow: 0 0 10px var(--primary-glow);
+}
+
+/* Train headlight */
+.train-headlight-perspective {
+    position: absolute;
+    top: 50%;
+    right: -25px;
+    width: 20px;
+    height: 20px;
+    transform: translateY(-50%);
+    background: radial-gradient(
+        circle,
+        var(--primary-light) 0%,
+        var(--primary) 50%,
+        transparent 100%
+    );
+    border-radius: 50%;
+    box-shadow: 0 0 30px var(--primary-glow);
+}
+
+/* Train wagon/carriage */
+.train-wagon {
+    width: 60px;
+    height: 35px;
+    background: var(--metallic-dark);
+    border-radius: 5px 5px 0 0;
+    border: 1px solid var(--metallic);
+    position: relative;
+}
+
+.train-wagon::before {
     content: '';
     position: absolute;
     top: 50%;
-    left: 15%;
-    width: 70%;
+    left: 10%;
+    width: 40%;
     height: 60%;
     transform: translateY(-50%);
     background: repeating-linear-gradient(
         90deg,
         transparent 0px,
-        rgba(255, 255, 255, 0.3) 8px,
-        rgba(255, 255, 255, 0.3) 12px,
-        transparent 16px,
-        transparent 20px
+        rgba(200, 200, 200, 0.3) 6px,
+        rgba(200, 200, 200, 0.3) 8px,
+        transparent 12px
     );
-    border-radius: 50px;
+    border-radius: 3px;
 }
 
-.train-silhouette::after {
-    content: '';
-    position: absolute;
-    top: 50%;
-    right: -5%;
-    width: 30px;
-    height: 60px;
-    transform: translateY(-50%);
-    background: radial-gradient(
-        circle,
-        rgba(255, 255, 255, 0.6) 0%,
-        rgba(255, 255, 255, 0.3) 50%,
-        transparent 100%
-    );
-    border-radius: 15px;
-    box-shadow: 0 0 30px rgba(255, 255, 255, 0.5);
-}
+/* Animation: Three phases */
+/* Phase 1: Dot on horizon (0-20%) */
+/* Phase 2: Approaching - grow in size (20-50%) */
+/* Phase 3: Passing by - wagons flash sequentially (50-100%) */
 
-/* Animation for the passing train - much more prominent */
-@keyframes train-passing {
+@keyframes train-perspective {
+    /* Phase 1: Dot on horizon (far away) */
     0% {
-        left: -150%;
+        transform: translate(-50%, -50%) scale(0.1);
         opacity: 0;
-        transform: translateY(-50%) scale(0.9);
     }
     10% {
+        transform: translate(-50%, -50%) scale(0.1);
+        opacity: 0.5;
+    }
+    /* Phase 2: Approaching - grow rapidly */
+    20% {
+        transform: translate(-50%, -50%) scale(0.1);
         opacity: 0.8;
-        transform: translateY(-50%) scale(1);
     }
     30% {
-        left: 0%;
+        transform: translate(-50%, -50%) scale(0.5);
+        opacity: 0.9;
+    }
+    40% {
+        transform: translate(-50%, -50%) scale(1);
         opacity: 1;
-        transform: translateY(-50%) scale(1);
+    }
+    50% {
+        transform: translate(-50%, -50%) scale(1.2);
+        opacity: 1;
+    }
+    /* Phase 3: Passing by - move left to right */
+    60% {
+        transform: translate(-150%, -50%) scale(1.2);
+        opacity: 1;
     }
     70% {
-        left: 100%;
-        opacity: 0.8;
-        transform: translateY(-50%) scale(1);
+        transform: translate(-250%, -50%) scale(1.2);
+        opacity: 0.9;
+    }
+    80% {
+        transform: translate(-350%, -50%) scale(1.2);
+        opacity: 0.7;
+    }
+    90% {
+        transform: translate(-450%, -50%) scale(1.2);
+        opacity: 0.5;
     }
     100% {
-        left: 250%;
+        transform: translate(-550%, -50%) scale(1.2);
         opacity: 0;
-        transform: translateY(-50%) scale(0.9);
     }
 }
 
-.passing-train.animate {
-    animation: train-passing 4s ease-out forwards;
+.perspective-train.animate {
+    animation: train-perspective 8s ease-out forwards;
 }
 
 /* Track Container */

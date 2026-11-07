@@ -52,17 +52,13 @@
         <!-- Floating Particles -->
         <div id="particles" class="particles"></div>
         
-        <!-- Passing Train Video Effect -->
-        <video id="passingTrainVideo" class="passing-train-video" loop muted playsinline preload="auto">
-            <!-- Add your train video here -->
-            <!-- <source src="assets/videos/train-passing.mp4" type="video/mp4"> -->
-            <!-- For now, we'll use a CSS-based train that looks like a video -->
-        </video>
-        
-        <!-- CSS-based Fallback Train (if no video) -->
-        <div class="passing-train-container" id="passingTrainContainer">
-            <div class="passing-train" id="passingTrain">
-                <div class="train-silhouette"></div>
+        <!-- Perspective Train Effect: Dot on horizon → Approaches → Wagons pass by -->
+        <div class="perspective-train-container" id="perspectiveTrainContainer">
+            <div class="perspective-train" id="perspectiveTrain">
+                <!-- Engine -->
+                <div class="train-engine-perspective"></div>
+                <div class="train-headlight-perspective"></div>
+                <!-- Wagons (will be added by JavaScript for dynamic count) -->
             </div>
         </div>
     </div>
