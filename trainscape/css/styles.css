@@ -1885,7 +1885,10 @@ body {
     }
     
     /* Keep perspective train animation working even with reduced motion */
-    .perspective-train {
+    .perspective-train,
+    .perspective-train *,
+    .perspective-train::before,
+    .perspective-train::after {
         animation-duration: 8s !important;
         animation-iteration-count: infinite !important;
         transition-duration: initial !important;
