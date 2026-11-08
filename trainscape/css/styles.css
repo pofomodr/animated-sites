@@ -1883,6 +1883,13 @@ body {
     .train-smoke {
         display: none !important;
     }
+    
+    /* Keep perspective train animation working even with reduced motion */
+    .perspective-train {
+        animation-duration: 8s !important;
+        animation-iteration-count: infinite !important;
+        transition-duration: initial !important;
+    }
 }
 
 /* ============================================
