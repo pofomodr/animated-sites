@@ -1,6 +1,7 @@
 /* ============================================
    ANIMATED SITES - Main Stylesheet
    High-quality animated website by pofomodr
+   Version: v1.4
    ============================================ */
 
 /* CSS Variables */
@@ -99,6 +100,26 @@ body {
 
 ::-webkit-scrollbar-thumb:hover {
     background: var(--primary);
+}
+
+/* ============================================
+   VERSION BADGE
+   ============================================ */
+.version-badge {
+    position: fixed;
+    bottom: 20px;
+    right: 20px;
+    background: rgba(0, 0, 0, 0.8);
+    color: var(--primary-light);
+    padding: 8px 12px;
+    border-radius: 6px;
+    font-family: var(--font-secondary);
+    font-size: 12px;
+    font-weight: 500;
+    z-index: 1000;
+    border: 1px solid rgba(99, 102, 241, 0.3);
+    backdrop-filter: blur(10px);
+    pointer-events: none;
 }
 
 /* ============================================

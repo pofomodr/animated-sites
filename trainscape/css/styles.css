@@ -4,7 +4,28 @@
  * 
  * Theme: Dark, moody, nostalgic with speed and landscape focus
  * Colors: Deep blacks, warm amber, cool blues, metallic silver
+ * Version: v1.4
  */
+
+/* ============================================
+   VERSION BADGE
+   ============================================ */
+.version-badge {
+    position: fixed;
+    bottom: 20px;
+    right: 20px;
+    background: rgba(0, 0, 0, 0.8);
+    color: var(--primary);
+    padding: 8px 12px;
+    border-radius: 6px;
+    font-family: 'Inter', sans-serif;
+    font-size: 12px;
+    font-weight: 500;
+    z-index: 1000;
+    border: 1px solid rgba(196, 130, 68, 0.3);
+    backdrop-filter: blur(10px);
+    pointer-events: none;
+}
 
 /* ============================================
    CSS CUSTOM PROPERTIES
@@ -218,7 +239,7 @@ body {
     width: 100%;
     height: 100%;
     pointer-events: none;
-    z-index: 5;
+    z-index: 30;
     overflow: hidden;
     perspective: 1000px;
 }
@@ -375,7 +396,7 @@ body {
     animation: train-perspective 8s ease-out forwards;
 }
 
-/* Track Container */
+/* Track Container - Hidden to show perspective train */
 .track-container {
     position: absolute;
     bottom: 0;
@@ -383,6 +404,7 @@ body {
     width: 100%;
     height: 200px;
     z-index: 10;
+    display: none;
 }
 
 .track {

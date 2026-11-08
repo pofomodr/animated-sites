@@ -1228,18 +1228,6 @@ Trainscape.startPassingTrains = function() {
     }, 20000 + Math.random() * 10000);
 };
 
-Trainscape.startPassingTrains = function() {
-    // Clear any existing interval
-    if (this.passingTrainInterval) {
-        clearInterval(this.passingTrainInterval);
-    }
-    
-    // Trigger a passing train every 20-30 seconds
-    this.passingTrainInterval = setInterval(() => {
-        this.triggerPassingTrain();
-    }, 20000 + Math.random() * 10000);
-};
-
 Trainscape.triggerPassingTrain = function() {
     // Don't trigger if already animating
     if (this.elements.perspectiveTrain && this.elements.perspectiveTrain.classList.contains('animate')) {
