@@ -1189,6 +1189,11 @@ Trainscape.initPassingTrain = function() {
     // Start periodic passing trains
     this.startPassingTrains();
     
+    // Trigger first train immediately (after a short delay to let page load)
+    setTimeout(() => {
+        this.triggerPassingTrain();
+    }, 2000);
+    
     // Also trigger on scroll
     window.addEventListener('scroll', this.triggerPassingTrain.bind(this));
     
@@ -1246,10 +1251,11 @@ Trainscape.triggerPassingTrain = function() {
 Trainscape.animatePerspectiveTrain = function() {
     if (!this.elements.perspectiveTrain) return;
     
-    // Reset state
+    // Remove animate class to reset
     this.elements.perspectiveTrain.classList.remove('animate');
-    this.elements.perspectiveTrain.style.transform = 'translate(-50%, -50%) scale(0.1)';
-    this.elements.perspectiveTrain.style.opacity = '0';
+    
+    // Force reflow to ensure class removal is applied
+    void this.elements.perspectiveTrain.offsetWidth;
     
     // Reset all wagons
     const wagons = this.elements.perspectiveTrain.querySelectorAll('.train-wagon');
@@ -1257,7 +1263,7 @@ Trainscape.animatePerspectiveTrain = function() {
         wagon.style.opacity = '0';
     });
     
-    // Start animation
+    // Start animation by adding the class
     this.elements.perspectiveTrain.classList.add('animate');
     
     // Play whoosh sound
