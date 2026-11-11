@@ -1,0 +1,400 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Ocean Waves | Animated Landscapes & Skies</title>
+    <meta name="description" content="Experience the rhythm of ocean waves flowing across landscapes and cityscapes under dynamic skies. An immersive animated experience.">
+    <meta name="theme-color" content="#082a3f">
+    <meta name="version" content="v1.0">
+    <link rel="stylesheet" href="css/styles.css">
+    <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;500;600;700&family=Inter:wght@300;400;500;600&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+    <link rel="preload" href="js/main.js" as="script">
+</head>
+<body>
+    <!-- Version Badge -->
+    <div class="version-badge">v1.0</div>
+
+    <!-- Audio Elements -->
+    <audio id="oceanAmbient" loop>
+        <source src="assets/sounds/ocean-waves.mp3" type="audio/mpeg">
+    </audio>
+    <audio id="seagulls" loop>
+        <source src="assets/sounds/seagulls.mp3" type="audio/mpeg">
+    </audio>
+    <audio id="cityAmbient" loop>
+        <source src="assets/sounds/city-ambient.mp3" type="audio/mpeg">
+    </audio>
+    <audio id="whooshSound" preload="auto">
+        <source src="assets/sounds/whoosh.mp3" type="audio/mpeg">
+    </audio>
+    <audio id="clickSound">
+        <source src="assets/sounds/click.mp3" type="audio/wav">
+    </audio>
+
+    <!-- Animation Layers Container -->
+    <div id="animationContainer" class="animation-container">
+        <!-- Sky Layer (Top) -->
+        <div class="layer sky-layer" id="skyLayer" data-speed="0.05">
+            <div class="sky-gradient" id="skyGradient"></div>
+            <div class="stars" id="stars"></div>
+            <div class="clouds" id="clouds"></div>
+            <div class="aurora" id="aurora"></div>
+            <div class="sun-moon" id="sunMoon"></div>
+        </div>
+
+        <!-- Landscape Layer -->
+        <div class="layer landscape-layer" id="landscapeLayer" data-speed="0.1">
+            <div class="mountains distant-mountains" id="distantMountains"></div>
+            <div class="mountains mid-mountains" id="midMountains"></div>
+            <div class="island" id="island"></div>
+            <div class="cliffs" id="cliffs"></div>
+        </div>
+
+        <!-- City Layer -->
+        <div class="layer city-layer" id="cityLayer" data-speed="0.15">
+            <div class="city-skyline" id="citySkyline"></div>
+            <div class="city-lights" id="cityLights"></div>
+            <div class="buildings" id="buildings"></div>
+        </div>
+
+        <!-- Wave Layers (Multiple for depth) -->
+        <div class="layer wave-layer wave-1" id="waveLayer1" data-speed="0.2"></div>
+        <div class="layer wave-layer wave-2" id="waveLayer2" data-speed="0.25"></div>
+        <div class="layer wave-layer wave-3" id="waveLayer3" data-speed="0.3"></div>
+        <div class="layer wave-layer wave-4" id="waveLayer4" data-speed="0.35"></div>
+
+        <!-- Water Surface -->
+        <div class="water-surface" id="waterSurface"></div>
+
+        <!-- Ripple Effects -->
+        <div class="ripples" id="ripples"></div>
+
+        <!-- Floating Particles -->
+        <div id="particles" class="particles"></div>
+
+        <!-- Reflection Layer -->
+        <div class="reflection-layer" id="reflectionLayer"></div>
+    </div>
+
+    <!-- Navigation -->
+    <nav id="mainNav" class="nav">
+        <div class="nav-container">
+            <a href="#" class="logo" id="logo">
+                <span class="logo-icon">&#127758;</span>
+                <span class="logo-text">ocean-waves</span>
+            </a>
+            <ul class="nav-links">
+                <li><a href="#home" class="nav-link active" data-hover="Home">Home</a></li>
+                <li><a href="#experience" class="nav-link" data-hover="Experience">Experience</a></li>
+                <li><a href="#landscapes" class="nav-link" data-hover="Landscapes">Landscapes</a></li>
+                <li><a href="#cities" class="nav-link" data-hover="Cities">Cities</a></li>
+                <li><a href="#skies" class="nav-link" data-hover="Skies">Skies</a></li>
+            </ul>
+            <div class="nav-controls">
+                <button id="soundToggle" class="control-btn sound-btn" aria-label="Toggle sound">
+                    <svg class="icon-on" viewBox="0 0 24 24" fill="currentColor">
+                        <path d="M12 2L7 7H2v10h5l5 5V7H12V2zM17 7v10h5V7h-5z"/>
+                    </svg>
+                    <svg class="icon-off" viewBox="0 0 24 24" fill="currentColor">
+                        <path d="M16.5 12c0-1.77-1.02-3.29-2.5-4.03v2.21l2.45 2.45c.03-.2.05-.41.05-.63zm2.5 0c0 .94-.2 1.82-.54 2.64l1.51 1.51C20.63 14.91 21 13.5 21 12c0-4.28-2.99-7.86-7-8.77v2.06c2.89.86 5 3.54 5 6.71zM4.27 3L3 4.27 7.73 9H3v6h4l5 5v-6.73l4.25 4.25c-.67.52-1.42.93-2.25 1.18v2.06c1.38-.31 2.63-.95 3.69-1.81L19.73 21 21 19.73l-9-9L4.27 3zM12 4L9.91 6.09 12 8.18V4z"/>
+                    </svg>
+                </button>
+                <button id="motionToggle" class="control-btn motion-btn" aria-label="Toggle motion effects">
+                    <svg viewBox="0 0 24 24" fill="currentColor">
+                        <path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm-2 15l-5-5 1.41-1.41L10 14.17l7.59-7.59L19 8l-9 9z"/>
+                    </svg>
+                </button>
+            </div>
+            <button class="mobile-menu-btn" id="mobileMenuBtn" aria-label="Toggle menu">
+                <span></span>
+                <span></span>
+                <span></span>
+            </button>
+        </div>
+    </nav>
+
+    <!-- Mobile Menu -->
+    <div id="mobileMenu" class="mobile-menu">
+        <ul class="mobile-nav-links">
+            <li><a href="#home" class="mobile-nav-link">Home</a></li>
+            <li><a href="#experience" class="mobile-nav-link">Experience</a></li>
+            <li><a href="#landscapes" class="mobile-nav-link">Landscapes</a></li>
+            <li><a href="#cities" class="mobile-nav-link">Cities</a></li>
+            <li><a href="#skies" class="mobile-nav-link">Skies</a></li>
+        </ul>
+    </div>
+
+    <!-- Main Content -->
+    <main id="mainContent">
+        <!-- Hero Section -->
+        <section id="home" class="hero">
+            <div class="hero-content">
+                <div class="hero-badge" id="heroBadge">
+                    <span class="badge-dot"></span>
+                    <span class="badge-text" id="badgeText">Flowing</span>
+                </div>
+                <h1 class="hero-title">
+                    <span class="title-line" data-text="Ocean">Ocean</span>
+                    <span class="title-line accent" data-text="Waves">Waves</span>
+                    <span class="title-line" data-text="Journey">Journey</span>
+                </h1>
+                <p class="hero-description" id="heroDescription">
+                    Where water meets land and sky. Experience the eternal rhythm of waves 
+                    flowing across landscapes, cities, and horizons.
+                </p>
+                <div class="hero-buttons">
+                    <button class="btn btn-primary btn-explore" id="exploreBtn">
+                        <span>Begin Flow</span>
+                        <svg class="btn-arrow" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                            <path d="M5 12h14M12 5l7 7-7 7"/>
+                        </svg>
+                    </button>
+                    <button class="btn btn-secondary btn-wave" id="waveBtn">
+                        <span id="waveIntensity">Calm</span>
+                    </button>
+                </div>
+            </div>
+            <div class="hero-visual">
+                <div class="wave-visual" id="heroWave"></div>
+            </div>
+            <div class="scroll-indicator">
+                <div class="mouse">
+                    <div class="wheel"></div>
+                </div>
+                <span>Scroll to flow</span>
+            </div>
+        </section>
+
+        <!-- Experience Section -->
+        <section id="experience" class="experience">
+            <div class="section-container">
+                <div class="section-header centered">
+                    <span class="section-tag">The Flow</span>
+                    <h2 class="section-title">Feel the <span class="accent">Rhythm</span></h2>
+                    <p class="section-description">
+                        Ocean waves carry the pulse of the planet. Close your eyes and feel 
+                        the ancient rhythm connecting water, land, and sky.
+                    </p>
+                </div>
+                <div class="experience-grid">
+                    <div class="experience-card">
+                        <div class="card-icon wave-icon">
+                            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5">
+                                <path d="M12 2a10 10 0 0 0-10 10c0 4.42 2.87 8.17 6.84 9.5l.5.05H20"/>
+                                <path d="M12 2a10 10 0 0 1 10 10c0 4.42-2.87 8.17-6.84 9.5l-.5-.05H4"/>
+                                <path d="M12 2v10"/>
+                            </svg>
+                        </div>
+                        <h3>Wave Motion</h3>
+                        <p>Multiple layers of waves with realistic physics and depth</p>
+                    </div>
+                    <div class="experience-card">
+                        <div class="card-icon mountain-icon">
+                            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5">
+                                <path d="M12 2l-6 6 6-6 6 6-6-6z"/>
+                                <path d="M12 8l-6 6 6-6 6 6-6-6z"/>
+                                <path d="M12 14l-6 6 6-6 6 6-6-6z"/>
+                            </svg>
+                        </div>
+                        <h3>Landscapes</h3>
+                        <p>Mountains, islands, and cliffs emerging from the waves</p>
+                    </div>
+                    <div class="experience-card">
+                        <div class="card-icon city-icon">
+                            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5">
+                                <rect x="2" y="10" width="20" height="12" rx="2"/>
+                                <path d="M4 10V4a2 2 0 0 1 2-2h12a2 2 0 0 1 2 2v6"/>
+                                <path d="M12 10v12"/>
+                                <path d="M8 10v12"/>
+                                <path d="M16 10v12"/>
+                            </svg>
+                        </div>
+                        <h3>City Lights</h3>
+                        <p>Urban skylines reflecting on the water surface</p>
+                    </div>
+                    <div class="experience-card">
+                        <div class="card-icon sky-icon">
+                            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5">
+                                <circle cx="12" cy="12" r="10"/>
+                                <path d="M12 2v1m0 18v1M2 12h1m18 0h1M5.636 5.636l.707.707M17.636 17.636l.707.707M5.636 18.364l.707-.707M17.636 6.364l.707-.707"/>
+                            </svg>
+                        </div>
+                        <h3>Dynamic Skies</h3>
+                        <p>Day/night cycles with clouds, stars, and auroras</p>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Landscapes Section -->
+        <section id="landscapes" class="landscapes">
+            <div class="section-container">
+                <div class="section-header">
+                    <span class="section-tag">Nature</span>
+                    <h2 class="section-title">Landscapes <span class="accent">Sculpted</span> by Waves</h2>
+                    <p class="section-description">
+                        Over millennia, ocean waves have shaped the most breathtaking coastal 
+                        landscapes. Witness this eternal dance.
+                    </p>
+                </div>
+                <div class="landscapes-content">
+                    <div class="landscape-item" data-landscape="cliffs">
+                        <div class="landscape-image" data-bg="cliffs"></div>
+                        <div class="landscape-overlay"></div>
+                        <div class="landscape-info">
+                            <h3>Sea Cliffs</h3>
+                            <p>Towering rock faces carved by relentless waves</p>
+                        </div>
+                    </div>
+                    <div class="landscape-item" data-landscape="beach">
+                        <div class="landscape-image" data-bg="beach"></div>
+                        <div class="landscape-overlay"></div>
+                        <div class="landscape-info">
+                            <h3>Sandy Shores</h3>
+                            <p>Golden beaches where land meets sea</p>
+                        </div>
+                    </div>
+                    <div class="landscape-item" data-landscape="island">
+                        <div class="landscape-image" data-bg="island"></div>
+                        <div class="landscape-overlay"></div>
+                        <div class="landscape-info">
+                            <h3>Island Paradise</h3>
+                            <p>Isolated beauty surrounded by endless ocean</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Cities Section -->
+        <section id="cities" class="cities">
+            <div class="section-container">
+                <div class="section-header centered">
+                    <span class="section-tag">Urban</span>
+                    <h2 class="section-title">Cities by the <span class="accent">Water</span></h2>
+                    <p class="section-description">
+                        Where human ingenuity meets the power of nature. 
+                        Skyscrapers rise like cliffs, streets flow like rivers.
+                    </p>
+                </div>
+                <div class="cities-grid">
+                    <div class="city-item">
+                        <div class="city-icon">&#127967;</div>
+                        <h3>Skyline</h3>
+                        <p>Towering buildings reflecting on water</p>
+                    </div>
+                    <div class="city-item">
+                        <div class="city-icon">&#128640;</div>
+                        <h3>Harbor</h3>
+                        <p>Sheltered waters where ships rest</p>
+                    </div>
+                    <div class="city-item">
+                        <div class="city-icon">&#127970;</div>
+                        <h3>Bridge</h3>
+                        <p>Connections spanning the waves</p>
+                    </div>
+                    <div class="city-item">
+                        <div class="city-icon">&#127959;</div>
+                        <h3>Lighthouse</h3>
+                        <p>Guiding light through the night</p>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Skies Section -->
+        <section id="skies" class="skies">
+            <div class="section-container">
+                <div class="section-header">
+                    <span class="section-tag">Atmosphere</span>
+                    <h2 class="section-title">Skies <span class="accent">Above</span></h2>
+                    <p class="section-description">
+                        The canvas above reflects the mood of the ocean below. 
+                        From dawn's first light to midnight's starry expanse.
+                    </p>
+                </div>
+                <div class="skies-timeline">
+                    <div class="timeline-item" data-time="dawn">
+                        <div class="time-marker"></div>
+                        <div class="time-content">
+                            <span class="time-label">Dawn</span>
+                            <h4>First Light</h4>
+                            <p>Soft pinks and oranges paint the horizon</p>
+                        </div>
+                    </div>
+                    <div class="timeline-item" data-time="day">
+                        <div class="time-marker"></div>
+                        <div class="time-content">
+                            <span class="time-label">Day</span>
+                            <h4>Azure</h4>
+                            <p>Clear blue skies with fluffy white clouds</p>
+                        </div>
+                    </div>
+                    <div class="timeline-item" data-time="dusk">
+                        <div class="time-marker"></div>
+                        <div class="time-content">
+                            <span class="time-label">Dusk</span>
+                            <h4>Twilight</h4>
+                            <p>Purples and golds blend into night</p>
+                        </div>
+                    </div>
+                    <div class="timeline-item" data-time="night">
+                        <div class="time-marker"></div>
+                        <div class="time-content">
+                            <span class="time-label">Night</span>
+                            <h4>Starry</h4>
+                            <p>Endless cosmos with aurora borealis</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Footer -->
+        <footer class="footer">
+            <div class="footer-container">
+                <div class="footer-brand">
+                    <a href="#" class="logo">
+                        <span class="logo-icon">&#127758;</span>
+                        <span class="logo-text">ocean-waves</span>
+                    </a>
+                    <p>The eternal rhythm of water, land, and sky.</p>
+                </div>
+                <div class="footer-info">
+                    <div class="info-item">
+                        <span class="info-label">Wave Intensity</span>
+                        <span class="info-value" id="footerWaveIntensity">Calm</span>
+                    </div>
+                    <div class="info-item">
+                        <span class="info-label">Time of Day</span>
+                        <span class="info-value" id="footerTimeOfDay">Day</span>
+                    </div>
+                    <div class="info-item">
+                        <span class="info-label">Distance Traveled</span>
+                        <span class="info-value" id="footerDistance">0 km</span>
+                    </div>
+                </div>
+                <div class="footer-bottom">
+                    <p>&copy; 2024 Ocean Waves. All rights reserved.</p>
+                    <p>Built with <span class="heart">&#10084;</span> and the Web Audio API</p>
+                </div>
+            </div>
+        </footer>
+    </main>
+
+    <!-- Custom Cursor -->
+    <div id="customCursor" class="custom-cursor"></div>
+    <div id="cursorTrail" class="cursor-trail"></div>
+
+    <!-- Device Orientation Indicator -->
+    <div id="orientationDebug" class="debug-panel">
+        <span id="orientationText"></span>
+    </div>
+
+    <!-- Touch Feedback -->
+    <div id="touchFeedback" class="touch-feedback"></div>
+
+    <script src="js/main.js"></script>
+</body>
+</html>
